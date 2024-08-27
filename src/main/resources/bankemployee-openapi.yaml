@@ -1,0 +1,74 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Swagger Backend API for bank employees
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080/
+paths:
+  /accounts:
+    post:
+      summary: Create an account
+      operationId: createAccount
+      tags:
+        - account
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /accounts/{accountId}:
+    get:
+      summary: Info for a specific account
+      operationId: showAccountById
+      tags:
+        - accounts
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The id of the account to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Account:
+      type: object
+      required:
+        - accountId
+        - balance
+      properties:
+        id:
+          type: string
+          format: uuid
+        balance:
+          type: number
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

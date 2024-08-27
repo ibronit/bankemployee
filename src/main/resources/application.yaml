@@ -1,0 +1,10 @@
+spring:
+  application.name: bankemployee
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank_employee
+    username: postgres
+    password: secret
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+    default-schema: bank_employee
