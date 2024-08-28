@@ -7,4 +7,4 @@ spring:
   flyway:
     enabled: true
     validate-on-migrate: true
-    default-schema: bank_employee
+    default-schema: public

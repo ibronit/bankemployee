@@ -1,4 +1,4 @@
 CREATE TABLE account (
-    account_id UUID PRIMARY KEY NOT NULL,
-    balance NUMERIC(2) NOT NULL
+    account_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    balance NUMERIC NOT NULL CHECK (balance >= 0)
 );

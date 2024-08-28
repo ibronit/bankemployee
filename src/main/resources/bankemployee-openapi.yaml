@@ -12,10 +12,27 @@ paths:
       summary: Create an account
       operationId: createAccount
       tags:
-        - account
+        - accounts
+      requestBody:
+        description: Account object. See the schemas.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
       responses:
         '201':
-          description: Null response
+          description: Newly created account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+        '400':
+          description: Client error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         default:
           description: unexpected error
           content:
@@ -41,7 +58,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
+                $ref: "#/components/schemas/AccountResponse"
         default:
           description: unexpected error
           content:
@@ -50,13 +67,20 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
-    Account:
+    AccountRequest:
+      type: object
+      required:
+        - balance
+      properties:
+        balance:
+          type: number
+    AccountResponse:
       type: object
       required:
         - accountId
         - balance
       properties:
-        id:
+        accountId:
           type: string
           format: uuid
         balance:
