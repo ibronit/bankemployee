@@ -14,7 +14,7 @@ paths:
       tags:
         - accounts
       requestBody:
-        description: Account object. See the schemas.
+        description: Request body to create a new account
         required: true
         content:
           application/json:
@@ -29,20 +29,12 @@ paths:
                 $ref: "#/components/schemas/AccountResponse"
         '400':
           description: Client error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        default:
+        '500':
           description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
   /accounts/{accountId}:
     get:
       summary: Info for a specific account
-      operationId: showAccountById
+      operationId: getAccountById
       tags:
         - accounts
       parameters:
@@ -52,6 +44,7 @@ paths:
           description: The id of the account to retrieve
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: Expected response to a valid request
@@ -59,12 +52,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AccountResponse"
-        default:
+        '404':
+          description: Account not found
+        '500':
           description: unexpected error
+  /transasctions:
+    post:
+      summary: Create a transaction between accounts
+      operationId: createTransaction
+      tags:
+        - transactions
+      requestBody:
+        description: Request body to perform a transaction between accounts.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+      responses:
+        '200':
+          description: Expected response to a valid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/TransactionResponse"
+        '400':
+          description: Client error
+        '404':
+          description: Account not found
+        '500':
+          description: unexpected error
 components:
   schemas:
     AccountRequest:
@@ -85,14 +102,29 @@ components:
           format: uuid
         balance:
           type: number
-    Error:
+    TransactionRequest:
       type: object
       required:
-        - code
-        - message
+        - fromAccountId
+        - toAccountId
+        - amount
       properties:
-        code:
-          type: integer
-          format: int32
-        message:
+        fromAccountId:
           type: string
+          format: uuid
+        toAccountId:
+          type: string
+          format: uuid
+        amount:
+          type: number
+    TransactionResponse:
+      type: object
+      required:
+        - transactionId
+        - amount
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        amount:
+          type: number

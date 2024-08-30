@@ -5,22 +5,34 @@ import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("account")
-public class AccountEntity {
+@Table("transaction")
+public class TransactionEntity {
   @Id
-  private UUID accountId;
-  private BigDecimal balance;
+  private final UUID transactionId;
+  private final UUID fromAccountId;
+  private final UUID toAccountId;
+  private final BigDecimal amount;
 
-  public AccountEntity(UUID accountId, BigDecimal balance) {
-    this.accountId = accountId;
-    this.balance = balance;
+  public TransactionEntity(UUID transactionId, UUID fromAccountId, UUID toAccountId, BigDecimal amount) {
+    this.transactionId = transactionId;
+    this.fromAccountId = fromAccountId;
+    this.toAccountId = toAccountId;
+    this.amount = amount;
   }
 
-  public UUID getAccountId() {
-    return accountId;
+  public UUID getTransactionId() {
+    return transactionId;
   }
 
-  public BigDecimal getBalance() {
-    return balance;
+  public UUID getFromAccountId() {
+    return fromAccountId;
+  }
+
+  public UUID getToAccountId() {
+    return toAccountId;
+  }
+
+  public BigDecimal getAmount() {
+    return amount;
   }
 }
