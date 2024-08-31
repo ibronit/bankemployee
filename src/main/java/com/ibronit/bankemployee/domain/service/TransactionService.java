@@ -1,5 +1,7 @@
 package com.ibronit.bankemployee.domain.service;
 
+import com.ibronit.bankemployee.application.rest.exception.NotFoundException;
+import com.ibronit.bankemployee.domain.exception.BalanceTooLowException;
 import com.ibronit.bankemployee.domain.model.AccountEntity;
 import com.ibronit.bankemployee.domain.model.TransactionEntity;
 import com.ibronit.bankemployee.domain.repository.AccountRepository;
@@ -23,16 +25,16 @@ public class TransactionService {
   public TransactionEntity createTransaction(UUID fromAccountId, UUID toAccountId, BigDecimal amount) {
     var maybeFromAccount = accountRepository.findByIdForUpdate(fromAccountId);
     if (maybeFromAccount.isEmpty()) {
-      // throw
+      throw new NotFoundException("Sender account not found");
     }
     var fromAccount = maybeFromAccount.get();
     if (fromAccount.getBalance().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
-      // throw
+      throw new BalanceTooLowException("The balance of the sender account would be too low after the transaction");
     }
 
     var maybeToAccount = accountRepository.findByIdForUpdate(toAccountId);
     if (maybeToAccount.isEmpty()) {
-      // throw
+      throw new NotFoundException("Receiver account not found");
     }
     var toAccount = maybeToAccount.get();
 

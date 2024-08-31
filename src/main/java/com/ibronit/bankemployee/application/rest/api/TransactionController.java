@@ -1,8 +1,11 @@
 package com.ibronit.bankemployee.application.rest.api;
 
-import com.ibronit.bankemployee.application.rest.exception.RequiredFieldsAreMissingException;
+import com.ibronit.bankemployee.application.rest.exception.NotFoundException;
+import com.ibronit.bankemployee.application.rest.exception.ClientErrorException;
 import com.ibronit.bankemployee.application.rest.model.TransactionRequest;
 import com.ibronit.bankemployee.application.rest.model.TransactionResponse;
+import com.ibronit.bankemployee.domain.exception.AccountNotFoundException;
+import com.ibronit.bankemployee.domain.exception.BalanceTooLowException;
 import com.ibronit.bankemployee.domain.model.TransactionEntity;
 import com.ibronit.bankemployee.domain.service.TransactionService;
 import java.math.BigDecimal;
@@ -25,20 +28,25 @@ public class TransactionController implements TransasctionsApi {
         || transactionRequest.getFromAccountId() == null
         || transactionRequest.getToAccountId() == null
     ) {
-      throw new RequiredFieldsAreMissingException();
+      throw new ClientErrorException("One of the required fields are missing");
     }
 
     if (transactionRequest.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-      // throw
+      throw new ClientErrorException("The amount must be a positive number");
     }
 
-    var transactionEntity = transactionService.createTransaction(
-        transactionRequest.getFromAccountId(),
-        transactionRequest.getToAccountId(),
-        transactionRequest.getAmount()
-    );
-
-    return new ResponseEntity<>(createResponseFromEntity(transactionEntity), HttpStatus.OK);
+    try {
+      var transactionEntity = transactionService.createTransaction(
+          transactionRequest.getFromAccountId(),
+          transactionRequest.getToAccountId(),
+          transactionRequest.getAmount()
+      );
+      return new ResponseEntity<>(createResponseFromEntity(transactionEntity), HttpStatus.OK);
+    } catch (AccountNotFoundException e) {
+      throw new NotFoundException(e.getMessage());
+    } catch (BalanceTooLowException e) {
+      throw new ClientErrorException(e.getMessage());
+    }
   }
 
   private TransactionResponse createResponseFromEntity(TransactionEntity transactionEntity) {

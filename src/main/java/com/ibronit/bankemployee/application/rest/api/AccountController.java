@@ -1,7 +1,7 @@
 package com.ibronit.bankemployee.application.rest.api;
 
-import com.ibronit.bankemployee.application.rest.exception.AccountNotFoundException;
-import com.ibronit.bankemployee.application.rest.exception.RequiredFieldsAreMissingException;
+import com.ibronit.bankemployee.application.rest.exception.NotFoundException;
+import com.ibronit.bankemployee.application.rest.exception.ClientErrorException;
 import com.ibronit.bankemployee.application.rest.model.AccountRequest;
 import com.ibronit.bankemployee.application.rest.model.AccountResponse;
 import com.ibronit.bankemployee.domain.model.AccountEntity;
@@ -23,7 +23,7 @@ public class AccountController implements AccountsApi {
   @Override
   public ResponseEntity<AccountResponse> createAccount(AccountRequest newAccount) {
     if (newAccount.getBalance() == null) {
-      throw new RequiredFieldsAreMissingException();
+      throw new ClientErrorException("The balance field must be provided in the request body");
     }
 
     var accountEntity = accountService.createAccount(newAccount.getBalance());
@@ -34,7 +34,7 @@ public class AccountController implements AccountsApi {
   public ResponseEntity<AccountResponse> getAccountById(UUID accountId) {
     var maybeAccountEntity = accountService.getAccountById(accountId);
     if (maybeAccountEntity.isEmpty()) {
-      throw new AccountNotFoundException();
+      throw new NotFoundException("Account not found by the provided accountId");
     }
 
     return new ResponseEntity<>(createResponseFromEntity(maybeAccountEntity.get()), HttpStatus.OK);

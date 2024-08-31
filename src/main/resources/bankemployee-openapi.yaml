@@ -128,3 +128,10 @@ components:
           format: uuid
         amount:
           type: number
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
