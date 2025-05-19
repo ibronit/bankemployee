@@ -8,10 +8,14 @@ services:
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=secret
     ports:
-      - 8080:8080
+      - '8080-8085:8080'
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - .:/app
+#    deploy:
+#      replicas: 2
 
   postgres:
     image: postgres:16
